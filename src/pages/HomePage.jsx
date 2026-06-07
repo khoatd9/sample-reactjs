@@ -1,6 +1,12 @@
+import Header from "../components/Header"
+import WishlistItems from "../components/WishListItems"
+
 function HomePage() {
   return (
-    <div>HomePage</div>
+    <div>
+      <Header />
+      <WishlistItems />
+    </div>
   )
 }
 
