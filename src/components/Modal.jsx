@@ -1,99 +1,103 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
+import { CRITERIA } from '../criteria';
+
+function initialScores() {
+    return Object.fromEntries(CRITERIA.map((c) => [c.key, 3]));
+}
 
 function Modal({ onSave }) {
-    const [user, setUser] = useState("")
-    const [itemName, setItemName] = useState("")
-    const [description, setDescription] = useState("")
-    const [criteriaA, setCriteriaA] = useState(1)
-    const [criteriaB, setCriteriaB] = useState(1)
+    const [itemName, setItemName] = useState("");
+    const [description, setDescription] = useState("");
+    const [scores, setScores] = useState(initialScores);
 
     function handleSaveItem() {
         onSave({
-            "user": user,
-            "name": itemName,
-            "description": description,
-            "criteriaA": criteriaA, 
-            "criteriaB": criteriaB
-        })
+            name: itemName,
+            description: description,
+            criteria: scores,
+        });
 
-        setUser("");
-        setItemName("")
-        setDescription("")
-        setCriteriaA(1)
-        setCriteriaB(1)
+        setItemName("");
+        setDescription("");
+        setScores(initialScores());
     }
 
     return (
         <>
-            <button onClick={() =>document.getElementById('item_id').showModal()} className="btn bg-blue-600 text-white hover:bg-blue-500">Add item</button>
+            <button
+                onClick={() => document.getElementById('item_id').showModal()}
+                className="rounded-full bg-pink-400 hover:bg-pink-500 text-white font-bold px-6 py-3 shadow-md transition"
+            >
+                ✨ Add a wish
+            </button>
+
             <dialog id="item_id" className="modal">
-                <div className="modal-box max-h-3/4">
-                    {/* Modal Content */}
-                    <div className="font-bold text-3xl mb-6">Add Wishlist Item </div>
-                    <div className=" font-semibold text-gray-800 mb-1">User: {user}</div>
-                    <input value={user} onChange={(e) => setUser(e.target.value) } type="text" placeholder="Enter user item" className="border rounded-box input-bordered w-full border-gray-200 placeholder-gray-400 p-2 mb-4"/>
-                    
-                    
-                    <h3 className="font-semibold text-gray-800 mb-1">Item Name</h3>
-                    <input 
-                        value={itemName} 
-                        onChange={(e) => setItemName(e.target.value)} 
-                        type="text" 
-                        placeholder="Enter item name" 
-                        className="border rounded-box input-bordered w-full border-gray-200 placeholder-gray-400 p-2 mb-4"/>
+                <div className="modal-box rounded-3xl max-h-3/4">
+                    <div className="font-extrabold text-3xl mb-1">✨ Add a wish</div>
+                    <p className="text-gray-500 mb-6">Tell us about the thing you want!</p>
 
-                    <h3 className="font-semibold text-gray-800 mb-1">Description</h3>
-                    <textarea value={description} onChange={(e) => setDescription(e.target.value)} type="text" placeholder="Enter item description" className="border rounded-box input-bordered w-full border-gray-200 placeholder-gray-400 h-30 mb-8 p-2 align-items: flex-start"/>
-                    
-                    
-                    <p className="font-semibold text-lg mb-5">Weighted Decision Matrix</p>
-                    <p className="text-sm text-gray-500">Rate each criterion from 1 (lowest) to 5 (highest)</p>
-                    <div className="flex justify-between my-5">
-                        <div>
-                            <p className="font-semibold">Criteria A</p>
-                            <p className="text-gray-500 text-sm">First evaluation criteria</p>
-                        </div>
-                        <select
-                        value={criteriaA}
-                        onChange={(e) => setCriteriaA(Number(e.target.value))}
+                    <label className="font-semibold text-gray-700 mb-1 block">What is it? 🎁</label>
+                    <input
+                        value={itemName}
+                        onChange={(e) => setItemName(e.target.value)}
+                        type="text"
+                        placeholder="e.g. LEGO castle"
+                        className="rounded-2xl w-full border border-pink-100 bg-pink-50 placeholder-gray-400 p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-pink-200"
+                    />
+
+                    <label className="font-semibold text-gray-700 mb-1 block">Why do you want it? 💭</label>
+                    <textarea
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        placeholder="Tell us more..."
+                        className="rounded-2xl w-full border border-pink-100 bg-pink-50 placeholder-gray-400 h-24 p-3 mb-6 focus:outline-none focus:ring-2 focus:ring-pink-200"
+                    />
+
+                    <p className="font-bold text-lg mb-1">How do you feel about it?</p>
+                    <p className="text-sm text-gray-500 mb-4">Pick from 1 (meh) to 5 (love it!)</p>
+
+                    {CRITERIA.map((c) => (
+                        <div
+                            key={c.key}
+                            className="flex justify-between items-center bg-gray-50 rounded-2xl p-3 my-3"
                         >
-                        {[1,2,3,4,5].map(score => (
-                            <option key={score} value={score}>
-                            {score}
-                            </option>
-                        ))}
-                        </select>
-                    </div>
-
-                    <div className="flex justify-between my-5">
-                        <div>
-                            <p className="font-semibold">Criteria B</p>
-                            <p className="text-gray-500 text-sm">First evaluation criteria</p>
+                            <div className="flex items-center gap-2">
+                                <span className="text-2xl">{c.emoji}</span>
+                                <span className="font-semibold text-gray-700">{c.label}</span>
+                            </div>
+                            <select
+                                value={scores[c.key]}
+                                onChange={(e) =>
+                                    setScores((prev) => ({ ...prev, [c.key]: Number(e.target.value) }))
+                                }
+                                className="rounded-xl border border-gray-200 p-2 bg-white"
+                            >
+                                {[1, 2, 3, 4, 5].map((n) => (
+                                    <option key={n} value={n}>
+                                        {n}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
-                        <select
-                        value={criteriaB}
-                        onChange={(e) => setCriteriaB(Number(e.target.value))}
-                        >
-                        {[1,2,3,4,5].map(score => (
-                            <option key={score} value={score}>
-                            {score}
-                            </option>
-                        ))}
-                        </select>
-                    </div>
+                    ))}
 
-                   
-                    
                     <div className="modal-action">
-                        <form method="dialog" className="flex gap-10">
-                            <button onClick={() => handleSaveItem()} className="btn btn-primary btn-soft"> Save </button>
-                            <button className="btn"> Close </button>
+                        <form method="dialog" className="flex gap-3 w-full">
+                            <button
+                                onClick={() => handleSaveItem()}
+                                className="flex-1 rounded-full bg-green-400 hover:bg-green-500 text-white font-bold py-3"
+                            >
+                                Save my wish 🌟
+                            </button>
+                            <button className="rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold px-6">
+                                Close
+                            </button>
                         </form>
                     </div>
                 </div>
-            </dialog>    
+            </dialog>
         </>
-    )
+    );
 }
 
 export default Modal;
